@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def index():
+@app.route('/landing')
+def landing():
     return '<h1>Hello World!</h1>'
 
 
