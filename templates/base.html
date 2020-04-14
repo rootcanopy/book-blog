@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 {% if title %}
-    <title>{{ title }} - Book-Blog </title>
+    <title>Book Blog - {{ title }} </title>
 {% else %}
-    <title>Awesome-Reads </title>
+    <title>Book Blog </title>
 {% endif %}
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.css" integrity="sha256-pok3KZeHPJvZi4o04UfObTBGUAIkwF/zZWbh+UuKaoE=" crossorigin="anonymous" />
@@ -26,11 +26,8 @@
 
 <body>
 
-    {% for post in posts %}
-        <h1> {{ post.title}} </h1>
-        <p> By {{ post.author }} on {{ post.date_posted}} </p>
-        <P> {{ post.content }} </p>
-    {% endfor %}
+    {% block content %} {% endblock %}
+
 </body>
 
     <!-- Bootstrap core JavaScript -->
