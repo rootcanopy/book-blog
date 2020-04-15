@@ -6,7 +6,7 @@ from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from datetime import datetime
 import bcrypt
-#from flask_login import LoginManager, user_loader, UserMixin, current_user, login_user
+from flask_login import login_user, logout_user, login_required
 
 
 app = Flask(__name__)
@@ -68,27 +68,46 @@ def register():
                                 'password': hashed_pw})
             session['username'] = request.form['username']
             # IF REGISTER IS SUCCESSFUL
-            flash(f'Account created for {form.username.data}.. Enjoy!', 'success')
-            return render_template(url_for('register'))
+            flash(f'Account created for {form.username.data}.. now just to login', 'success')
+            return render_template(url_for('login'))#TODO CHANGE TO USER PROFILE
 
         else:
             flash('Registration Failed. Check yo\'self, please try again!', 'danger')
-            return redirect(url_for('register'))
+            return render_template(url_for('register'))
 
     return render_template('register.html', title = 'Register', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # ADDED CONVENIENCE FOR USER -LESS OPTIONS
+    # LOGIN HANDLER
+    if session.get('logged_in'):
+        if session['logged_in'] is True:
+            return redirect(url_for('home', title='Home'))
+     
     form = LoginForm()
     user = mongo.db.users.find_one({'email': form.email.data})
+
     if form.validate_on_submit():
         flash('You are logged in!', 'success')
         return redirect(url_for('home'))
     else:
         flash('Login Failed.. Please Check Yourself!', 'danger')
     return render_template('login.html', title = 'Log In', form=form)
+
+
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('home.html'))
+
+
+@app.route('/logout')
+def logout():
+    # CLEARS SESH AND REDIRECTS TO HOME
+    session.clear()
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
