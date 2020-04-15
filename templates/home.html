@@ -3,8 +3,8 @@
 {% block content %}
 
     {% for post in posts %}
-        <article class="media blog-post">
-            <div class="media-body">
+        <article class="media content-section">
+            <div class="media-body container">
                 <div class="article-metadata">
                     <a class="mr-3" href="#">{{ post.author }}</a>
                     <small class="text-muted">{{ post.date_posted }}</small>
@@ -14,7 +14,5 @@
             </div>
         </article>
     {% endfor %}
-
-    
 
 {% endblock content %}
