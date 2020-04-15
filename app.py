@@ -69,11 +69,11 @@ def register():
             session['username'] = request.form['username']
             # IF REGISTER IS SUCCESSFUL
             flash(f'Account created for {form.username.data}.. now just to login', 'success')
-            return render_template(url_for('login'))#TODO CHANGE TO USER PROFILE
+            return redirect(url_for('login'))#TODO CHANGE TO USER PROFILE
 
         else:
-            flash('Registration Failed. Check yo\'self, please try again!', 'danger')
-            return render_template(url_for('register'))
+            flash(f'Registration Failed. Check yo\'self, please try again!', 'danger')
+            return render_template('register.html', title='Register', form=form)
 
     return render_template('register.html', title = 'Register', form=form)
 
@@ -89,18 +89,31 @@ def login():
     user = mongo.db.users.find_one({'email': form.email.data})
 
     if form.validate_on_submit():
-        flash('You are logged in!', 'success')
-        return redirect(url_for('home'))
+        users = mongo.db.users
+        db_user = users.find_one({'email': request.form['email'] })
+        
+        if db_user:
+            if bcrypt.hashpw(request.form['password'].encode('utf-8'),
+                db_user['password']) == db_user['password']:
+                session['email'] = request.form['email']
+                session['logged_in'] = True
+        return redirect(url_for('home', title='Signed In', form=form))
     else:
         flash('Login Failed.. Please Check Yourself!', 'danger')
     return render_template('login.html', title = 'Log In', form=form)
 
+""""
+@app.route('/user/<username>')
+def user(username):
+    user = mongo.db.users.find_one('username': request.username.data)
+    return render_template('user.html', user=user)
+"""
 
 @login_required
 def logout():
     logout_user()
     flash('You have been logged out.')
-    return redirect(url_for('home.html'))
+    return redirect(url_for('home'))
 
 
 @app.route('/logout')
