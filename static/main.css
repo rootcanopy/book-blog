@@ -33,6 +33,10 @@ body {
     margin: 20px;
     margin-top: 5em;
   }
+
+  ul li .sidebar {
+    text-decoration: none;
+  }
   
   .article-title {
     color: #444444;

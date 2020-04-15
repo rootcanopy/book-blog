@@ -66,6 +66,8 @@ source env/bin/activate
 
 python-3.6 -m venv env
 
+flashed messages not flashing
+
 
 ## **Deployment**
 

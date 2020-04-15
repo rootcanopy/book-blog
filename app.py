@@ -45,13 +45,19 @@ def register():
     if form.validate_on_submit():
         flash(f'{form.username.data} you now have an account.. Enjoy!', 'success')
         return redirect(url_for('home'))
-    return render_template('register.html', title = 'Register', form = form)
+    return render_template('register.html', title = 'Register', form=form)
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    return render_template('login.html', title = 'Log In', form = form)
+    if form.validate_on_submit():
+        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+            flash('You are logged in!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Login Failed.. Please Check Yourself!', 'danger')
+    return render_template('login.html', title = 'Log In', error=error)
 
 
 if __name__ == '__main__':
