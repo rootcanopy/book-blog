@@ -1,7 +1,8 @@
 import os
 import env
+import models
+from forms import RegistrationForm, LoginForm
 from flask import Flask, render_template, redirect, url_for, flash, request, session
-import forms
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -55,9 +56,9 @@ def about():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     # FUNCTIONALITY OF USER REGISTER
-    form = RegistrationForm(request.form)
     if form.validate_on_submit():
         users = mongo.db.users
+        form = RegistrationForm(request.form)
         existing_user = users.find_one({'username': request.form['username']})
         
         if existing_user is None:
@@ -86,7 +87,7 @@ def login():
             return redirect(url_for('home', title='Home'))
      
     form = LoginForm()
-    user = mongo.db.Users.find_one({'email': form.email.data})
+    user = mongo.db.users.find_one({'email': form.email.data})
 
     if form.validate_on_submit():
         users = mongo.db.users
