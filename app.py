@@ -5,18 +5,20 @@ from forms import RegistrationForm, LoginForm
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from datetime import datetime
-#from flask_login import LoginManager
+import bcrypt
+#from flask_login import LoginManager, user_loader, UserMixin, current_user, login_user
 
 
 app = Flask(__name__)
 
-# SECRET KEY FOR CSRF
+
+# SECRET KEY FOR CSRF #TODO
 app.config['SECRET_KEY'] = '8bf1555c499fe3cc55021fd1e87585e5'
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
-#login = LoginManager(app)
 
 mongo = PyMongo(app)
+
 
 posts = [
     {
@@ -52,23 +54,41 @@ def about():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
+    # FUNCTIONALITY OF USER SIGN UP
+    form = RegistrationForm(request.form)
     if form.validate_on_submit():
-        flash(f'{form.username.data} you now have an account.. Enjoy!', 'success')
-        return redirect(url_for('home'))
+        users = mongo.db.users
+        existing_user = users.find_one({'username': request.form['username']})
+        
+        if existing_user is None:
+            # HASHED PW AND INSERT TO COLL
+            hashed_pw = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
+            users.insert_one({'username': request.form['username'],
+                                'email': request.form['email'],
+                                'password': hashed_pw})
+            session['username'] = request.form['username']
+            # IF REGISTER IS SUCCESSFUL
+            flash(f'Account created for {form.username.data}.. Enjoy!', 'success')
+            return render_template(url_for('register'))
+
+        else:
+            flash('Registration Failed. Check yo\'self, please try again!', 'danger')
+            return redirect(url_for('register'))
+
     return render_template('register.html', title = 'Register', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # ADDED CONVENIENCE FOR USER -LESS OPTIONS
     form = LoginForm()
+    user = mongo.db.users.find_one({'email': form.email.data})
     if form.validate_on_submit():
-        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-            flash('You are logged in!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Login Failed.. Please Check Yourself!', 'danger')
-    return render_template('login.html', title = 'Log In', error=error)
+        flash('You are logged in!', 'success')
+        return redirect(url_for('home'))
+    else:
+        flash('Login Failed.. Please Check Yourself!', 'danger')
+    return render_template('login.html', title = 'Log In', form=form)
 
 
 if __name__ == '__main__':
