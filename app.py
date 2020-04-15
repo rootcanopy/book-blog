@@ -91,7 +91,7 @@ def login():
     if form.validate_on_submit():
         users = mongo.db.users
         db_user = users.find_one({'email': request.form['email'] })
-        
+
         if db_user:
             if bcrypt.hashpw(request.form['password'].encode('utf-8'),
                 db_user['password']) == db_user['password']:
@@ -109,7 +109,6 @@ def user(username):
     return render_template('user.html', user=user)
 """
 
-@login_required
 def logout():
     logout_user()
     flash('You have been logged out.')

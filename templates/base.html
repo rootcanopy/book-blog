@@ -37,7 +37,7 @@
                     <!-- IF USER SESSION ACTIVE CHANGE ITEM -->
                     {% if 'email' in session %}
                         <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    {% else %}
+                        {% else %}
                         <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
                         <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
                     {% endif %}
