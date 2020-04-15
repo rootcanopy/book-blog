@@ -14,35 +14,52 @@
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <!-- Custom CSS style Rules -->
-  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
 </head>
 
 <body>
 
     <header class="head-nav">
-        <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-            <a class="navbar-brand" href="#">Book Blog</a>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container">
+              <a class="navbar-brand book-b" href="{{ url_for('home') }}">Book Blog</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
-                        <a class="nav-item nav-link" href="#">Features</a>
+                    <div class="navbar-nav ml-auto">
+                        <a class="nav-item nav-link active" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
                         <a class="nav-item nav-link" href="#">Pricing</a>
                         <a class="nav-item nav-link disabled" href="#">Disabled</a>
                     </div>
                 </div>
+            </div>
         </nav>
     </header>
 
-    <div class="container">
-
-    {% block content %} {% endblock %}
-
-    </div>
+    <main class="container">
+        <div class="row">
+            <div class="col-md-8">
+                {% block content %} {% endblock %}
+            </div>
+            <div class="col-md-4">
+                <div class="organised-updates">
+                    <h3> Our Sidebar </h3>
+                    <p class="text-muted"> Any Information
+                        <ul>
+                            <li>Latest Books</li>
+                            <li>Book Reviews</li>
+                            <li>Announcements</li>
+                            <li>Calenders</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 
     <!-- Bootstrap core JavaScript -->
