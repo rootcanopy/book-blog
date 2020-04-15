@@ -1,7 +1,7 @@
 import os
 import env
 from flask import Flask, render_template, redirect, url_for, flash, request, session
-from forms import RegistrationForm, LoginForm
+import forms
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -54,7 +54,7 @@ def about():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    # FUNCTIONALITY OF USER SIGN UP
+    # FUNCTIONALITY OF USER REGISTER
     form = RegistrationForm(request.form)
     if form.validate_on_submit():
         users = mongo.db.users
@@ -73,7 +73,7 @@ def register():
 
         else:
             flash(f'Registration Failed. Check yo\'self, please try again!', 'danger')
-            return render_template('register.html', title='Register', form=form)
+        return render_template('register.html', title='Register', form=form)
 
     return render_template('register.html', title = 'Register', form=form)
 
@@ -86,7 +86,7 @@ def login():
             return redirect(url_for('home', title='Home'))
      
     form = LoginForm()
-    user = mongo.db.users.find_one({'email': form.email.data})
+    user = mongo.db.Users.find_one({'email': form.email.data})
 
     if form.validate_on_submit():
         users = mongo.db.users
@@ -102,23 +102,18 @@ def login():
         flash('Login Failed.. Please Check Yourself!', 'danger')
     return render_template('login.html', title = 'Log In', form=form)
 
-""""
-@app.route('/user/<username>')
-def user(username):
-    user = mongo.db.users.find_one('username': request.username.data)
-    return render_template('user.html', user=user)
-"""
 
-def logout():
-    logout_user()
-    flash('You have been logged out.')
-    return redirect(url_for('home'))
+@app.route('/account')
+def account():
+    image_file = url_for('static', filename='images/')
+    return render_template('account.html', title='My Account')
 
 
 @app.route('/logout')
 def logout():
     # CLEARS SESH AND REDIRECTS TO HOME
     session.clear()
+    flash('You have been logged out.')
     return redirect(url_for('home'))
 
 
