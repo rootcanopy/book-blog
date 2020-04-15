@@ -1,8 +1,11 @@
 import os
 import env
 from flask import Flask, render_template, url_for
+from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = '8bf1555c499fe3cc55021fd1e87585e5'
 
 posts = [
     {
@@ -33,6 +36,11 @@ def home():
 
 @app.route('/about')
 def about():
+    return render_template('about.html', title = 'About-Page')
+
+
+@app.route('/register')
+def register():
     return render_template('about.html', title = 'About-Page')
 
 

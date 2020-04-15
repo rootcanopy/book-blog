@@ -54,6 +54,8 @@ I swapped over to ATOM on my machine to try debug the books.py file but no joy
 
 During development I've encountered quite a few errors, namely with Jinja down to my own syntax.
 
+some modules not found because of venv
+
 i used dummy data posts to check functionality
 
 Failed to push to Heroku
