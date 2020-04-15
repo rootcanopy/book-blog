@@ -1,11 +1,22 @@
 import os
 import env
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request, session
 from forms import RegistrationForm, LoginForm
+from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
+from datetime import datetime
+#from flask_login import LoginManager
+
 
 app = Flask(__name__)
 
+# SECRET KEY FOR CSRF
 app.config['SECRET_KEY'] = '8bf1555c499fe3cc55021fd1e87585e5'
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+
+#login = LoginManager(app)
+
+mongo = PyMongo(app)
 
 posts = [
     {

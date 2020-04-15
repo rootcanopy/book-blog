@@ -34,7 +34,7 @@ body {
     margin-top: 5em;
   }
 
-  ul li .sidebar {
+  .sidebar ul li {
     text-decoration: none;
   }
   
