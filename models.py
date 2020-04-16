@@ -4,7 +4,7 @@ from datetime import datetime
 from flask_login.login_manager import LoginManager
 from wtforms.fields.core import IntegerField, StringField
 from wtforms.fields.simple import BooleanField
-#from django.db.models.fields import EmailField
+from django.db.models.fields import EmailField
 from twisted.protocols.amp import Integer
 from django.forms.fields import DateTimeField
 from django.db.models import ForeignKey
