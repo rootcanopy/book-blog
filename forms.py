@@ -1,8 +1,11 @@
 import os
+from app import mongo
 from flask_wtf import FlaskForm
-from flask_user import current_user
+from flask_wtf.file import FileField, FileAllowed
+from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, validators
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from models import User
 
 
 class RegistrationForm(FlaskForm):

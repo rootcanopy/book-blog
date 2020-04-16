@@ -1,16 +1,19 @@
 import os
 import env
-from forms import RegistrationForm, LoginForm, UpdateAccountForm
+from flask_wtf import FlaskForm
+from models import RegistrationForm, LoginForm, UpdateAccountForm
 from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
-from datetime import datetime
-from flask_user import current_user, login_required, UserMixin, login_required
-from flask_user.forms import EditUserProfileForm
+from models import User, Post
+from flask_login import LoginManager, current_user, login_user, login_required
 import bcrypt
 
 
 app = Flask(__name__)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
 
 # SECRET KEY FOR CSRF #TODO
@@ -60,12 +63,12 @@ def register():
     if form.validate_on_submit():
         
         user = mongo.db.users
-        existing_user = users.find_one({'username': request.form['username']})
+        existing_user = user.find_one({'username': request.form['username']})
         
         if existing_user is None:
             # HASHED PW AND INSERT TO COLL
             hashed_pw = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-            mongo.db.users.insert({'username': request.form['username'],
+            mongo.db.users.insertOne({'username': request.form['username'],
                                    'email': request.form['email'],
                                    'password': hashed_pw})
             session['username'] = request.form['username']
@@ -90,16 +93,14 @@ def login():
 
         if form.validate_on_submit():
             user = mongo.db.users
-            db_user = users.find_one({'email': request.form['email'] })
+            db_user = user.find_one({'email': request.form['email'] })
 
 
             if db_user:
-                if bcrypt.hashpw(request.form['password'].encode('utf-8'),
+                if bcrypt.hashpw(request.form['password'].decode('utf-8'),
                     db_user['password']) == db_user['password']:
                     session['email'] = request.form['email']
                     session['logged_in'] = True
-                    session['user_id'] = user_live
-                    session['usertype'] = user['type']
             
                 return redirect(url_for('home', title='Account'))
         else:
@@ -107,15 +108,30 @@ def login():
     return render_template('login.html', title = 'Log In', form=form)
 
 
+# USERS PROFILE ACCOUNT
 @app.route('/account')
-@login_required
+#@login_required
 def account():
     form = UpdateAccountForm()
+    # FOR THE USER TO UPDATE ACCOUNT DETAILS
+    if form.validate_on_submit():
+
+        current_user.username = form.username.data
+        current_user.username = form.email.data
+        mongo.db.user.insertOne()
+
+        flash('your account has been updated!', 'success')
+        return redirect(url_for('account'))
+
+    elif request.method == 'GET':
+            form.username.data = current_user.username
+            form.email.data = current_user.email
+
     image_file = url_for('static', filename='images/ + current_user.image_file')
     return render_template('account.html', title='My Account', image_file=image_file, form=form)
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     # CLEARS SESH AND REDIRECTS TO HOME
     session.clear()
